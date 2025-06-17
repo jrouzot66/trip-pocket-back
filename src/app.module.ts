@@ -1,19 +1,26 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
-import { ProductsModule } from './products/products.module';
-import { MongooseModule } from '@nestjs/mongoose';
+import { User } from './user/user.entity';
+import { UserService } from './user/user.service';
+import { UserController } from './user/user.controller';
 
 @Module({
   imports: [
-    UsersModule, 
-    ProductsModule, 
-    MongooseModule.forRoot(
-      'mongodb+srv://cheikh:passer@cluster0.asfbj2d.mongodb.net/mini-project-teamx-database?retryWrites=true&w=majority'
-    )
+    TypeOrmModule.forRoot({
+      type: 'mariadb',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'password',
+      database: 'trip',
+      entities: [User],
+      synchronize: true, // À désactiver en production
+    }),
+    TypeOrmModule.forFeature([User]),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, UserController],
+  providers: [AppService, UserService],
 })
 export class AppModule {}
